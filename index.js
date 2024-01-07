@@ -1,21 +1,33 @@
 import express from "express";
 import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
-import { getMarketCapDifference } from "./modules/marketdifference/market.server.controller.js";
+import { generateMessage } from "./modules/marketdifference/market.msg.generate.js";
+import TelegramBot from "node-telegram-bot-api";
 
 configDotenv();
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json())
 
-// app.post('*', async (req, res)=>{
-//   console.log(req.body)
-//   res.send("app post")
-// })
+const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-// app.get('*',async (req, res) =>{
-//   res.send('server is started')
-// })
+bot.onText(/\/start/, async (msg, match) => {
+
+  let chatId = msg.chat.id;
+  
+  bot.sendMessage(chatId, "Choose /getall or /fivethousand");
+});
+
+bot.onText(/\/getall/, async (msg, match) => {
+
+  let chatId = msg.chat.id;
+ 
+  bot.sendMessage(chatId, "Fetching Data... May take around 25 - 30 mins");
+  
+  const message = await generateMessage()
+  bot.sendMessage(chatId, message);
+  
+});
 
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -23,7 +35,6 @@ mongoose
     app.listen(PORT, () => {
       console.log(`server is listening in ${PORT}`);
     });
-    getMarketCapDifference()
   })
   .catch((error) => {
     console.log(error);

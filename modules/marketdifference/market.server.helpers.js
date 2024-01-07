@@ -10,7 +10,6 @@ export async function getPreviousMarketData() {
     [doc.symbol]: doc.marketCap,
   }));
   console.log("fetched db data")
-  console.log(resultArray)
   return resultArray;
 }
 
@@ -18,13 +17,12 @@ export async function getPreviousMarketData() {
 export async function getCurrentMarketData(symbols, delay) {
   const results = [];
   let count = 0
-  let slicedSymbols = symbols.slice(0,50)
+  let slicedSymbols = symbols.slice(0,10)
   // Loop through symbols with a delay between requests
   for (const symbol of symbols) {
     const data = await scrapeData(symbol);
     results.push(data);
     count++
-    console.log("pushed", count, ".", data)
     // Introduce a delay between requests
     await new Promise((resolve) => setTimeout(resolve, delay));
   }

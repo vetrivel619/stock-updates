@@ -1,7 +1,8 @@
 import { getCurrentMarketData, getPreviousMarketData } from "./market.server.helpers.js";
 import { symbols } from "../../data/bse.js";
 
-let slicedSymbols = symbols.slice(0,50)
+let slicedSymbols = symbols.slice(0,10)
+
 export async function getMarketCapDifference(){
 
     let previousData = await getPreviousMarketData()
@@ -40,6 +41,6 @@ export async function getMarketCapDifference(){
       console.log("Tops array:", topsResult);
       console.log("Bottoms array:", bottomsResult);
 
-      sendMessage(topsResult, bottomsResult)
+      return [topsResult, bottomsResult]
 
 }
