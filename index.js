@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
 import { generateMessage } from "./modules/marketdifference/market.msg.generate.js";
 import TelegramBot from "node-telegram-bot-api";
-
+import cron from 'node-cron'
+import { updateMarketCap } from "./cron.controller.js";
 configDotenv();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +16,7 @@ bot.onText(/\/start/, async (msg, match) => {
 
   let chatId = msg.chat.id;
   
-  bot.sendMessage(chatId, "Choose /getall or /fivethousand");
+  bot.sendMessage(chatId, "type or click /getall ");
 });
 
 bot.onText(/\/getall/, async (msg, match) => {
@@ -29,11 +30,19 @@ bot.onText(/\/getall/, async (msg, match) => {
   
 });
 
+cron.schedule('0 22 * * *', async () => {
+  console.log('Updating Market Cap atabase at 10:00 PM');
+  // Perform any additional actions with the result if needed
+  await updateMarketCap()
+});
+
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     app.listen(PORT, () => {
       console.log(`server is listening in ${PORT}`);
+      updateMarketCap()
     });
   })
   .catch((error) => {
