@@ -42,7 +42,6 @@ mongoose
   .then(() => {
     app.listen(PORT, () => {
       console.log(`server is listening in ${PORT}`);
-      updateMarketCap()
     });
   })
   .catch((error) => {
