@@ -44,8 +44,10 @@ bot.onText(/\/custom/, async (msg, match) => {
       if (!isNaN(numberOfCompanies)) {
         // Process the user's input (e.g., generate a message based on the input)
         bot.sendMessage(chatId, `you entered ${numberOfCompanies} Wait for ${parseInt(numberOfCompanies)} seconds`);
-        const message = await generateMessage(numberOfCompanies)
-        bot.sendMessage(chatId, message);
+        const [topsMessage,bottomsMessage] = await generateMessage(numberOfCompanies)
+        bot.sendMessage(chatId, topsMessage);
+        bot.sendMessage(chatId, bottomsMessage);
+
       } else {
         bot.sendMessage(chatId, "Please enter a valid number.");
       }
