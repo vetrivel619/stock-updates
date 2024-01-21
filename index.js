@@ -30,7 +30,7 @@ bot.onText(/\/getall/, async (msg, match) => {
   
 });
 
-cron.schedule('0 22 * * *', async () => {
+cron.schedule('56 11 * * *', async () => {
   console.log('Updating Market Cap atabase at 10:00 PM');
   // Perform any additional actions with the result if needed
   await updateMarketCap()

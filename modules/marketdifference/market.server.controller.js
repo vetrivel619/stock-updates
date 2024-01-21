@@ -15,7 +15,7 @@ export async function getMarketCapDifference(){
     const result = [];
     console.log(map2)
     // Iterate through each company name in the predefined array
-    for (const symbol of symbols) {
+    for (const symbol of slicedSymbols) {
         const value1 = map1.get(symbol) || 0; // Default to 0 if not present in array1
         const value2 = map2.get(symbol) || 0; // Default to 0 if not present in array2
 

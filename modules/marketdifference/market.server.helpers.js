@@ -20,7 +20,7 @@ export async function getCurrentMarketData(symbols, delay) {
   let slicedSymbols = symbols.slice(0,10)
   // Loop through symbols with a delay between requests
   for (const symbol of symbols) {
-    const data = await scrapeData(symbol);
+    const data = await scrapeData(slicedSymbols);
     results.push(data);
     count++
     // Introduce a delay between requests
