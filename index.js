@@ -25,8 +25,9 @@ bot.onText(/\/getall/, async (msg, match) => {
  
   bot.sendMessage(chatId, "Fetching Data... May take around 25 - 30 mins");
   
-  const message = await generateMessage()
-  bot.sendMessage(chatId, message);
+  const [topsMessage, bottomsMessage] = await generateMessage()
+  bot.sendMessage(chatId, topsMessage);
+  bot.sendMessage(chatId, bottomsMessage);
   
 });
 bot.onText(/\/custom/, async (msg, match) => {
@@ -57,8 +58,8 @@ bot.onText(/\/custom/, async (msg, match) => {
   
 });
 
-cron.schedule('30 19 * * *', async () => {
-  console.log('Updating Market Cap atabase at 10:00 PM');
+cron.schedule('30 16 * * * ', async () => {
+  console.log('Updating Market Cap atabase at 7:30 PM');
   // Perform any additional actions with the result if needed
   await updateMarketCap()
 });

@@ -33,11 +33,11 @@ export async function getMarketCapDifference(total = 1928){
       });
       
       // Extracting the tops array
-      const tops = sortedData.filter(item => Object.values(item)[0] >= 0);
+      const tops = sortedData.filter(item => Object.values(item)[0] >= 4);
       const topsResult = tops.length > 0 ? tops : [];
       
       // Extracting the bottoms array
-      const bottoms = sortedData.filter(item => Object.values(item)[0] < 0);
+      const bottoms = sortedData.filter(item => Object.values(item)[0] < -5);
       const bottomsResult = bottoms.length > 0 ? bottoms : [];
       
       console.log("Tops array:", topsResult);

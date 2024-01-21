@@ -1,30 +1,30 @@
 import { getMarketCapDifference } from "./market.server.controller.js";
 
-export async function generateMessage(total = 1928) {
-    const [topsResult, bottomsResult] = await getMarketCapDifference(total);
-   
-    const currentDateAndTime = new Date();
-    const formattedDateAndTime = currentDateAndTime.toLocaleString();
-  
-    let message = `Initiated on : ${formattedDateAndTime}:\n`;
-  
-    message += "\nTops:\n";
-    message += "\n";
-    topsResult.forEach((item) => {
-      const symbol = Object.keys(item)[0];
-      const percentageChange = Object.values(item)[0].toFixed(2);
-      message += `${symbol}  :  ${percentageChange}\n`;
-    });
-  
-    message += "\nBottoms:\n";
-    message += "\n";
-    bottomsResult.forEach((item) => {
-      const symbol = Object.keys(item)[0];
-      const percentageChange = Object.values(item)[0].toFixed(2);
-      message += `${symbol}  :  ${percentageChange}\n`;
-    });
-  
-    // Return the combined message
-    return message;
-  }
-  
+export async function generateMessages(total = 1928) {
+  const [topsResult, bottomsResult] = await getMarketCapDifference(total);
+
+  // Adjust the current date and time to IST
+  const currentDateAndTime = new Date();
+  const utcOffset = 5.5 * 60 * 60 * 1000; // Convert 5 hours and 30 minutes to milliseconds
+  const istDateAndTime = new Date(currentDateAndTime.getTime() + utcOffset);
+  const formattedDateAndTime = istDateAndTime.toLocaleString();
+
+  // Generate Tops message
+  let topsMessage = `Tops - Initiated on : ${formattedDateAndTime}:\n\n`;
+  topsResult.forEach((item) => {
+    const symbol = Object.keys(item)[0];
+    const percentageChange = Object.values(item)[0].toFixed(2);
+    topsMessage += `${symbol}  :  ${percentageChange}\n`;
+  });
+
+  // Generate Bottoms message
+  let bottomsMessage = `Bottoms - Initiated on : ${formattedDateAndTime}:\n\n`;
+  bottomsResult.forEach((item) => {
+    const symbol = Object.keys(item)[0];
+    const percentageChange = Object.values(item)[0].toFixed(2);
+    bottomsMessage += `${symbol}  :  ${percentageChange}\n`;
+  });
+
+  // Return an array containing both messages
+  return [topsMessage, bottomsMessage];
+}
