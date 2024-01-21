@@ -1,26 +1,26 @@
 import CompanySchema from "../../models/company.model.js";
 import axios from "axios";
 import * as cheerio from "cheerio";
-
+import { symbols } from "../../data/bse.js";
 
 // function for previous market data, which is saved in db
-export async function getPreviousMarketData() {
-  const allDocuments = await CompanySchema.find();
+export async function getPreviousMarketData(total = 1928) {
+  const allDocuments = await CompanySchema.find({}).limit(total);
   const resultArray = allDocuments.map((doc) => ({
     [doc.symbol]: doc.marketCap,
   }));
-  console.log("fetched db data")
+  console.log(`fetched ${total} companies data`)
   return resultArray;
 }
 
 // function for scraping data from screener website with symbol
-export async function getCurrentMarketData(symbols, delay) {
+export async function getCurrentMarketData(total, delay) {
   const results = [];
   let count = 0
-  let slicedSymbols = symbols.slice(0,10)
+  let slicedSymbols = symbols.slice(0, total)
   // Loop through symbols with a delay between requests
-  for (const symbol of symbols) {
-    const data = await scrapeData(slicedSymbols);
+  for (const symbol of slicedSymbols) {
+    const data = await scrapeData(symbol);
     results.push(data);
     count++
     // Introduce a delay between requests

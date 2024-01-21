@@ -29,8 +29,35 @@ bot.onText(/\/getall/, async (msg, match) => {
   bot.sendMessage(chatId, message);
   
 });
+bot.onText(/\/custom/, async (msg, match) => {
 
-cron.schedule('56 11 * * *', async () => {
+  let chatId = msg.chat.id;
+  let numberOfCompanies;
+  bot.sendMessage(chatId, "enter the no.of companies");
+  bot.on('text', async (msg) => {
+    // Check if the message is from the same chat
+    
+    if (msg.chat.id === chatId) {
+       numberOfCompanies = parseInt(msg.text);
+
+      if (!isNaN(numberOfCompanies)) {
+        // Process the user's input (e.g., generate a message based on the input)
+        bot.sendMessage(chatId, `you entered ${numberOfCompanies} Wait for ${parseInt(numberOfCompanies)} seconds`);
+        const message = await generateMessage(numberOfCompanies)
+        bot.sendMessage(chatId, message);
+      } else {
+        bot.sendMessage(chatId, "Please enter a valid number.");
+      }
+
+      // Remove the listener to avoid processing future messages
+        bot.removeTextListener();
+    }
+  });
+ 
+  
+});
+
+cron.schedule('30 19 * * *', async () => {
   console.log('Updating Market Cap atabase at 10:00 PM');
   // Perform any additional actions with the result if needed
   await updateMarketCap()
@@ -42,6 +69,7 @@ mongoose
   .then(() => {
     app.listen(PORT, () => {
       console.log(`server is listening in ${PORT}`);
+      
     });
   })
   .catch((error) => {

@@ -3,26 +3,31 @@ import CompanySchema from "./models/company.model.js";
 import * as cheerio from "cheerio";
 
 import axios from "axios"
-export async function updateMarketCap(){
+export async function updateMarketCap(total = 1928) {
+  console.log("updating");
 
-    console.log("updating")
-    let updatedData = await getCurrentMarketData(symbols, 1000)
+  const delay = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    console.log(updatedData)
-  for (const update of updatedData) {
-    const filter = { symbol: update.symbol };
-    const updateOperation = { $set: { marketCap: update.marketCap } };
+  for (const currentSymbol of symbols.slice(0, total)) {
+      const currentMarketData = await scrapeData(currentSymbol);
 
-    try {
-      const result = await CompanySchema.updateOne(filter, updateOperation);
-    } catch (error) {
-      console.error(`Error updating document for symbol: ${update.symbol}`, error);
-    }
+      const filter = { symbol: currentSymbol };
+      const updateOperation = { $set: { marketCap: currentMarketData.marketCap } };
+      console.log({currentSymbol : currentMarketData})
+      try {
+          const result = await CompanySchema.updateOne(filter, updateOperation, { upsert: true });
+          // console.log(result);
+      } catch (error) {
+          console.error(`Error updating/creating document for symbol: ${currentSymbol}`, currentMerket);
+      }
+
+      // Introduce a one-second delay
+      await delay(1000); // 1000 milliseconds = 1 second
   }
 }
 
 
-async function scrapeData(symbol) {
+export async function scrapeData(symbol) {
     const url = `https://www.screener.in/company/${symbol}/consolidated/`;
   
     try {
@@ -50,12 +55,12 @@ async function scrapeData(symbol) {
 
 
   // function for scraping data from screener website with symbol
-async function getCurrentMarketData(symbols, delay) {
+async function getCurrentMarketData(total, delay) {
     const results = [];
     let count = 0
-    let slicedSymbols = symbols.slice(0,2)
+    let slicedSymbols = symbols.slice(0,total)
     // Loop through symbols with a delay between requests
-    for (const symbol of symbols) {
+    for (const symbol of slicedSymbols) {
       const data = await scrapeData(symbol);
       results.push(data);
       count++

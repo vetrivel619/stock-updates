@@ -1,3 +1,14 @@
-let num = -8
+import { scrapeData } from "./cron.controller.js";
 
-console.log(-5 > num)
+
+
+
+let symbol = "IRFC"
+
+
+async function printData(){
+    let data = await scrapeData(symbol)
+    console.log(data)
+}
+
+printData()

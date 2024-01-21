@@ -3,7 +3,7 @@ import fs from 'fs'
 
 
 // Load the Excel file
-const workbook = XLSX.readFile('data.xlsx');
+const workbook = XLSX.readFile('symbol_mcap.xlsx');
 
 // Select the sheet you want to read (assuming the first sheet in this example)
 const sheetName = workbook.SheetNames[0];

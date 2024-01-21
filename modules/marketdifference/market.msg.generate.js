@@ -1,8 +1,8 @@
 import { getMarketCapDifference } from "./market.server.controller.js";
 
-export async function generateMessage() {
-    const [topsResult, bottomsResult] = await getMarketCapDifference();
-  
+export async function generateMessage(total = 1928) {
+    const [topsResult, bottomsResult] = await getMarketCapDifference(total);
+   
     const currentDateAndTime = new Date();
     const formattedDateAndTime = currentDateAndTime.toLocaleString();
   

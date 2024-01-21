@@ -1,4 +1,4 @@
-export const symbols = [
+const symbols = [
   "RELIANCE",
   "TCS",
   "HDFCBANK",
