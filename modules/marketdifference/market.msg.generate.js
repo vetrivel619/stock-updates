@@ -1,6 +1,6 @@
 import { getMarketCapDifference } from "./market.server.controller.js";
 
-export async function generateMessages(total = 1928) {
+export async function generateMessage(total = 1928) {
   const [topsResult, bottomsResult] = await getMarketCapDifference(total);
 
   // Adjust the current date and time to IST
