@@ -12,58 +12,53 @@ app.use(express.json())
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
-bot.onText(/\/start/, async (msg, match) => {
 
-  let chatId = msg.chat.id;
-  
-  bot.sendMessage(chatId, "type or click /getall ");
+bot.onText(/\/start/, async (msg, match) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, "Type /getall or /custom");
 });
 
 bot.onText(/\/getall/, async (msg, match) => {
-
-  let chatId = msg.chat.id;
- 
+  const chatId = msg.chat.id;
   bot.sendMessage(chatId, "Fetching Data... May take around 25 - 30 mins");
   
   const [topsMessage, bottomsMessage] = await generateMessage()
   bot.sendMessage(chatId, topsMessage);
   bot.sendMessage(chatId, bottomsMessage);
-  
 });
-bot.onText(/\/custom/, async (msg, match) => {
 
-  let chatId = msg.chat.id;
-  let numberOfCompanies;
-  bot.sendMessage(chatId, "enter the no.of companies");
-  bot.on('text', async (msg) => {
-    // Check if the message is from the same chat
-    
-    if (msg.chat.id === chatId) {
-       numberOfCompanies = parseInt(msg.text);
+const chatStates = {};
 
-      if (!isNaN(numberOfCompanies)) {
-        // Process the user's input (e.g., generate a message based on the input)
-        bot.sendMessage(chatId, `you entered ${numberOfCompanies} Wait for ${parseInt(numberOfCompanies)} seconds`);
-        const [topsMessage,bottomsMessage] = await generateMessage(numberOfCompanies)
-        bot.sendMessage(chatId, topsMessage);
-        bot.sendMessage(chatId, bottomsMessage);
+bot.onText(/\/custom/, (msg) => {
+  const chatId = msg.chat.id;
+  chatStates[chatId] = { state: 'waitingForNumberOfCompanies' };
+  bot.sendMessage(chatId, "Enter the number of companies");
+});
 
-      } else {
-        bot.sendMessage(chatId, "Please enter a valid number.");
-      }
+bot.on('text', async (msg) => {
+  const chatId = msg.chat.id;
+  const state = chatStates[chatId];
 
-      // Remove the listener to avoid processing future messages
-        bot.removeTextListener();
-    }
-  });
- 
-  
+  if (!state || state.state !== 'waitingForNumberOfCompanies') {
+    return;
+  }
+
+  const numberOfCompanies = parseInt(msg.text);
+
+  if (!isNaN(numberOfCompanies)) {
+    bot.sendMessage(chatId, `You entered ${numberOfCompanies}. Wait for ${numberOfCompanies} seconds`);
+    const [topsMessage, bottomsMessage] = await generateMessage(numberOfCompanies);
+    bot.sendMessage(chatId, topsMessage);
+    bot.sendMessage(chatId, bottomsMessage);
+    delete chatStates[chatId]; // Reset state after processing
+  } else {
+    bot.sendMessage(chatId, "Please enter a valid number.");
+  }
 });
 
 cron.schedule('30 16 * * * ', async () => {
-  console.log('Updating Market Cap atabase at 7:30 PM');
-  // Perform any additional actions with the result if needed
-  await updateMarketCap()
+  console.log('Updating Market Cap database at 7:30 PM');
+  await updateMarketCap();
 });
 
 
